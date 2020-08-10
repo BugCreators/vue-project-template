@@ -1,0 +1,63 @@
+.ql-header {
+  background-color: #373a41;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 60px;
+  padding: 0 32px 0 17px;
+
+  &-right {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    justify-content: flex-end;
+    height: 100%;
+  }
+
+  &-nav {
+    height: 100%;
+    margin-right: 35px;
+    display: flex;
+
+    li {
+      margin: 0 18px;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      position: relative;
+
+      a {
+        color: #959698;
+      }
+
+      &.router-link-active {
+        a {
+          color: #fff;
+        }
+        
+        &::after {
+          content: "";
+          position: absolute;
+          width: 28px;
+          height: 5px;
+          bottom: 0;
+          left: 50%;
+          transform: translateX(-50%);
+          background-color: $themeColor;
+        }
+      }
+    }
+  }
+
+  &-user {
+    img {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+    }
+
+    &-avatar {
+      cursor: pointer;
+    }
+  }
+}

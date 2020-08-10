@@ -1,28 +1,33 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import Home from "../views/Home.vue";
+
+const routes = [
+  // 默认页面
+  {
+    path: "/",
+    redirect: "nestedRoute",
+  },
+].concat(
+  // 动态加载各模块路由，./subPages/xx/routes.js
+  ...(r => {
+    return r.keys().map(key => {
+      return r(key).default.map(route => {
+        return {
+          path: route.path,
+          name: route.name,
+          redirect: route.redirect,
+          component: route.component,
+          children: route.children || [],
+        };
+      });
+    });
+  })(require.context("../views", true, /^\.(\/\w+)+\/routes\.js$/i))
+);
 
 Vue.use(VueRouter);
 
-const routes = [
-  {
-    path: "/",
-    name: "Home",
-    component: Home
-  },
-  {
-    path: "/about",
-    name: "About",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/About.vue")
-  }
-];
-
 const router = new VueRouter({
-  routes
+  routes,
 });
 
 export default router;

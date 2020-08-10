@@ -1,0 +1,117 @@
+//TODO: 修改全局样式
+@font-face {
+  font-family: "Arial2";
+  src: local("Arial");
+  unicode-range: U+30-39;
+}
+
+body {
+  font-size: $baseFontSize; // font-family: $baseFontFamily;
+  font-family: Arial2, "Times New Roman", "Microsoft Yahei", SimSun;
+  background: $bodyBgColor;
+  min-width: 1024px;
+  line-height: 20px;
+  word-break: break-word;
+  word-wrap: break-word;
+}
+
+a {
+  text-decoration: none;
+}
+
+img {
+  max-width: 100%;
+}
+
+button {
+  outline: none;
+}
+
+.icon {
+  display: inline-block;
+}
+
+/* 谷歌自定义滚动条样式 */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: #fff;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(235, 238, 245, 1);
+  border-radius: 15px;
+}
+
+::-webkit-scrollbar-button {
+  background-color: transparent;
+}
+
+::-webkit-scrollbar-corner {
+  background-color: #fff;
+}
+
+//TODO: 重置UI库的样式
+// el-message-box
+.el-message-box {
+  &__content {
+    color: #666666;
+  }
+}
+
+// el-popover
+.el-popover {
+  &.ql-header__popover {
+    min-width: 100px;
+    max-width: 450px;
+    padding: 10px 4px;
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.3);
+
+    .icon {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .lesson-item {
+      padding: 9px 0 9px 10px;
+      cursor: pointer;
+      position: relative;
+      max-width: 102px;
+      text-indent: 20px;
+
+      &:hover,
+      &.is-active {
+        color: $themeColor;
+      }
+    }
+
+    .lesson-name {
+      display: block;
+      text-align: center;
+      @include ellipsis();
+    }
+  }
+}
+
+// el-button
+.el-button {
+  &,
+  &:hover {
+    color: #999999;
+    background-color: #fff;
+    border: 1px solid #dcdfe6;
+  }
+
+  &--primary {
+    &,
+    &:hover {
+      color: #fff;
+      border-color: $themeColor;
+      background-color: $themeColor;
+    }
+  }
+}

@@ -1,0 +1,122 @@
+/**
+ * @file 常用样式
+ */
+
+@mixin common($plh: ".") {
+  /*************** 内外边距 ***************/
+  /* 
+   * size范围: $d-$i 间隔为$d
+   * 类名: .{mg|pd}-{t|b|l|r}-{size}
+   */
+  $i: 50;
+  $d: 5;
+  @while $i > 0 {
+    #{$plh}mg- {
+      &t-#{$i} {
+        margin-top: #{$i}px;
+      }
+      &b-#{$i} {
+        margin-bottom: #{$i}px;
+      }
+      &l-#{$i} {
+        margin-left: #{$i}px;
+      }
+      &r-#{$i} {
+        margin-right: #{$i}px;
+      }
+    }
+    #{$plh}pd- {
+      &t-#{$i} {
+        padding-top: #{$i}px;
+      }
+      &b-#{$i} {
+        padding-bottom: #{$i}px;
+      }
+      &l-#{$i} {
+        padding-left: #{$i}px;
+      }
+      &r-#{$i} {
+        padding-right: #{$i}px;
+      }
+    }
+
+    $i: $i - $d;
+  }
+
+  /*************** 字体相关 ***************/
+  /*
+   * 字体相关
+   * size范围: 12-28 间隔为2
+   * 类名 .fz-{size}
+   */
+  $fz: 28;
+
+  @while $fz > 10 {
+    #{$plh}fz-#{$fz} {
+      font-size: #{$fz}px;
+    }
+
+    $fz: $fz - 2;
+  }
+
+  #{$plh}f-bold {
+    font-weight: bold;
+  }
+
+  /*************** 布局相关 ***************/
+
+  #{$plh}pos {
+    &-a {
+      position: absolute;
+    }
+
+    &-r {
+      position: relative;
+    }
+  }
+
+  #{$plh}dib {
+    display: inline-block;
+  }
+
+  #{$plh}dis-flex {
+    @include dis-flex();
+  }
+
+  #{$plh}flex-1 {
+    @include flex-1();
+  }
+
+  #{$plh}align-center {
+    @include align-center();
+  }
+
+  #{$plh}hor-center {
+    @include hor-center();
+  }
+
+  /*
+   * 文字对齐
+   * $aligns对齐方式
+   * 类名 .text-{align}
+   */
+  $aligns: center, right, left;
+  @each $align in $aligns {
+    #{$plh}text-#{$align} {
+      text-align: #{$align};
+    }
+  }
+
+  /*************** 其它 ***************/
+  #{$plh}cur-hand {
+    cursor: pointer;
+  }
+
+  // 单行文字截断
+  #{$plh}ellipsis {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 100%;
+  }
+}

@@ -1,0 +1,47 @@
+@charset "utf-8";
+//-----------------------------------------------------
+// setting
+//-----------------------------------------------------
+
+// font相关
+//-----------------------------------------------------
+$baseFontSize: 14px !default;
+$baseLineHeight: 1.5 !default;
+$baseFontFamily: "Microsoft Yahei", sans-serif !default;
+
+// 元素间距
+//-----------------------------------------------------
+$baseGap: 20px !default;
+
+// 主题色
+//-----------------------------------------------------
+
+$themeColor: #3eb296 !default;
+$tgc1: #38c3a1 !default;
+
+// scaffolding
+//-----------------------------------------------------
+$bodyBgColor: #fff !default;
+$textColor: #666 !default;
+
+// 交互配色
+// 警告，错误，成功，提示
+//-----------------------------------------------------
+// 每个变量都有三个颜色值，分别为：文本色，背景色，边框色
+$warningColor: #514721 #fff6bf #ffd324 !default;
+$errorColor: #8a1f11 #fbe3e4 #fbc2c4 !default;
+$successColor: #264409 #e6efc2 #c6d880 !default;
+$infoColor: #205791 #d5edf8 #92cae4 !default;
+
+// radius
+//-----------------------------------------------------
+$baseRadius: 5px !default;
+$smallRadius: 3px !default;
+
+// z-index
+//-----------------------------------------------------
+$zIndexDropdown: 1000 !default;
+$zIndexFixedTopbar: 1010 !default;
+$zIndexTooltip: 1020 !default;
+$zIndexAlert: 1030 !default;
+$zIndexModal: 1100 !default;

@@ -1,0 +1,565 @@
+<%@ page language="java" contentType="text/html;charset=UTF-8"
+         pageEncoding="UTF-8" isELIgnored="false"%>
+    <%
+    request.setAttribute("ctx", request.getContextPath());
+%>
+        <!DOCTYPE html>
+        <html lang="en">
+
+        <head>
+            <meta charset="UTF-8">
+            <script type="text/javascript" src="js/jquery-1.12.1.min.js"></script>
+            <link href="js/umeditor1.2.3/themes/default/css/umeditor.css" type="text/css" rel="stylesheet">
+            <script type="text/javascript" src="js/umeditor1.2.3/third-party/template.min.js"></script>
+            <script type="text/javascript" charset="utf-8" src="js/umeditor1.2.3/umeditor.config.js"></script>
+            <script type="text/javascript" charset="utf-8" src="js/umeditor1.2.3/umeditor.js"></script>
+            <link rel="stylesheet" href="./js/kityformula-plugin/kityformula/assets/styles/base.css">
+            <link rel="stylesheet" href="./js/kityformula-plugin/kityformula/assets/styles/ui.css">
+            <link rel="stylesheet" href="./js/kityformula-plugin/kityformula/assets/styles/scrollbar.css">
+            <script src="./js/kityformula-plugin/kityformula/js/kitygraph.all.js"></script>
+            <script src="./js/kityformula-plugin/kityformula/js/kity-formula-render.all.js"></script>
+            <script src="./js/kityformula-plugin/kityformula/js/kity-formula-parser.all.min.js"></script>
+            <script src="./js/kityformula-plugin/kityformula/js/kityformula-editor.all.min.js"></script>
+            <script type="text/javascript" src="./js/kityformula-plugin/kityformula/js/editor_control.js"></script>
+            <script type="text/javascript" src="js/umeditor1.2.3/lang/zh-cn/zh-cn.js"></script>
+            <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+            <script type="text/javascript" charset="utf-8" src="js/ueditor_utf8-jsp_1_4_3/third-party/webuploader/webuploader.js"></script>
+            <script type="text/javascript" src="js/bootstrap.min.js"></script>
+            <title>Document</title>
+        </head>
+
+        <body>
+            <div id="umeditor">
+            </div>
+            <!-- <div id="kfEditorContainer" class="kf-editor">
+                <div id="tips" class="tips">
+                    sorry! Beta版本仅支持IE9及以上版本的浏览器，正式版本将会支持低版本浏览器，谢谢您的关注！
+                </div>
+                <button id="ok">ok</button>
+            </div> -->
+            <script type="text/javascript">
+            var fileIndex = 0;
+            var utils = UM.utils;
+            // UM.registerUI('simpleupload',
+            //     function(name) {
+            //         var me = this;
+
+            //         var $btn = $.eduibutton({
+            //             icon: 'image',
+
+            //             click: function() {
+            //                 var id = name + (new Date() - 0);
+            //                 var $div = $('<div>').attr('id', id).css({
+            //                     width: 100,
+            //                     height: 32,
+            //                     position: 'absolute'
+            //                 }).appendTo(me.$container.find('.edui-dialog-container'));
+            //                 var uploader = WebUploader.create({
+
+            //                     // 选完文件后，是否自动上传。
+            //                     auto: true,
+            //                     fileVal: 'upfile',
+            //                     // swf文件路径
+            //                     swf: +'${ctx}/js/ueditor_utf8-jsp_1_4_3/third-party/webuploader/Uploader.swf',
+            //                     // 文件接收服务端。
+            //                     server: UM.Editor.prototype.getActionUrl('uploadfile'),
+            //                     formData: {
+            //                         // catalogId: ''
+            //                     },
+            //                     pick: '#' + id,
+            //                     accept: {
+            //                         title: 'file',
+            //                         extensions: '*',
+            //                         mimeTypes: '*'
+            //                     }
+            //                 });
+            //                 setTimeout(function() {
+            //                     $('#' + id).find('input').trigger('click');
+
+            //                 }, 100);
+            //                 uploader.on('uploadSuccess', function(file, response) {
+            //                 	var w = me.$container.width();
+            //                     var html = '<img src="' + response.url + '" style="max-width='+w+'px;min-width:10px;min-height:10px;"/>'
+
+            //                     me.execCommand('inserthtml', html);
+            //                     $(me.$container.find('.edui-dialog-container')).html('')
+            //                 })
+            //             },
+            //             title: this.getLang('labelMap')['image'] || ''
+            //         });
+
+
+            //         this.addListener('selectionchange', function() {
+            //             var state = this.queryCommandState(name);
+            //             $btn.edui().disabled(state == -1).active(state == 1)
+            //         });
+            //         return $btn;
+            //     }
+            // );
+            // UM.registerUI('kityformula', function(name) {
+            //     var me = this,
+            //         $dialog, currentRange, opt = {
+            //             title: '插入公式',
+            //             width: 800,
+            //             height: 600,
+            //             cancellabel: "取消",
+            //             oklabel: "确定",
+            //         };
+            //     var $btn = $.eduibutton({
+            //         icon: 'formula',
+            //         click: function() {
+            //         },
+            //         title: this.getLang('labelMap')['formula'] || ''
+
+            //     })
+            //     $dialog = $.eduimodal(opt);
+
+            //     $dialog.attr('id', 'edui-dialog-' + name).addClass('edui-dialog-' + name)
+            //         .find('.edui-modal-body').addClass('edui-dialog-' + name + '-body').html('<div id="kfEditorContainer" class="kf-editor"> <div id = "tips" class = "tips" > sorry!Beta版本仅支持IE9及以上版本的浏览器， 正式版本将会支持低版本浏览器， 谢谢您的关注！ </div>  </div>');
+            //     $dialog.edui().on('beforehide', function() {
+            //         var rng = me.selection.getRange();
+            //         if (rng.equals(currentRange)) {
+            //             rng.select()
+            //         }
+            //     }).on('beforeshow', function() {
+            //         var $root = this.root(),
+            //             win = null,
+            //             offset = null;
+            //         currentRange = me.selection.getRange();
+            //         if (!$root.parent()[0]) {
+            //             me.$container.find('.edui-dialog-container').append($root);
+            //         }
+
+            //         //IE6下 特殊处理, 通过计算进行定位
+            //         if ($.IE6) {
+
+            //             win = {
+            //                 width: $(window).width(),
+            //                 height: $(window).height()
+            //             };
+            //             offset = $root.parents(".edui-toolbar")[0].getBoundingClientRect();
+            //             $root.css({
+            //                 position: 'absolute',
+            //                 margin: 0,
+            //                 left: (win.width - $root.width()) / 2 - offset.left,
+            //                 top: 100 - offset.top
+            //             });
+
+            //         }
+            //         UM.setWidgetBody(name, $dialog, me);
+            //         UM.setTopEditor(me);
+            //         if (document.body.addEventListener) {
+            //                 $("#tips").html('<div id="loading"><img src="./js/kityformula-plugin/kityformula/loading.gif" alt="loading" /><p>正在加载，请耐心等待...</p></div>');
+            //                 var factory = kf.EditorFactory.create($("#kfEditorContainer")[0], {
+            //                     render: {
+            //                         fontsize: 40
+            //                     },
+            //                     resource: {
+            //                         path: "./js/kityformula-plugin/kityformula/resource/",
+            //                         assets: "./js/kityformula-plugin/kityformula/"
+            //                     },
+            //                     assets: {
+            //                         path: ""
+            //                     }
+            //                 });
+            //                 factory.ready(function(KFEditor) {
+
+            //                     $("#tips").remove();
+
+            //                     // this指向KFEditor
+            //                     this.execCommand("render", "\\placeholder");
+            //                     this.execCommand("focus");
+            //                     window.kfe = this;
+            //                 });
+            //             } else {
+            //                 $("#tips").css("color", "black");
+            //                 $("#tips").css("padding", "10px");
+            //             }
+            //     }).on('afterbackdrop', function() {
+            //         this.$backdrop.css('zIndex', me.getOpt('zIndex') + 1).appendTo(me.$container.find('.edui-dialog-container'))
+            //         $dialog.css('zIndex', me.getOpt('zIndex') + 2)
+            //     }).on('beforeok', function() {
+            //         try {
+            //         	kfe.execCommand('get.image.data', function(data) {
+            //         		var w = me.$container.width();
+	           //              var latex = kfe.execCommand('get.source');
+	           //              um.execCommand('inserthtml', '<img class="kfformula" src="' + data.img + '" data-latex="' + latex + '" style="max-width='+w+'px;min-width:10px;min-height:10px;"/>');
+	           //          });
+	           //          return false;
+            //             currentRange.select()
+            //         } catch (e) {}
+            //     }).attachTo($btn)
+
+            //     this.addListener('selectionchange', function() {
+            //         var state = this.queryCommandState(name);
+            //         $btn.edui().disabled(state == -1).active(state == 1)
+            //     });
+            //     return $btn;
+            // });
+            // UM.ajax = function() {
+
+
+            //     //创建一个ajaxRequest对象
+            //     var fnStr = 'XMLHttpRequest()';
+            //     try {
+            //         new ActiveXObject("Msxml2.XMLHTTP");
+            //         fnStr = 'ActiveXObject(\'Msxml2.XMLHTTP\')';
+            //     } catch (e) {
+            //         try {
+            //             new ActiveXObject("Microsoft.XMLHTTP");
+            //             fnStr = 'ActiveXObject(\'Microsoft.XMLHTTP\')'
+            //         } catch (e) {}
+            //     }
+            //     var creatAjaxRequest = new Function('return new ' + fnStr);
+
+
+            //     *
+            //      * 将json参数转化成适合ajax提交的参数列表
+            //      * @param json
+                 
+            //     function json2str(json) {
+            //         var strArr = [];
+            //         for (var i in json) {
+            //             //忽略默认的几个参数
+            //             if (i == "method" || i == "timeout" || i == "async" || i == "dataType" || i == "callback") continue;
+            //             //忽略控制
+            //             if (json[i] == undefined || json[i] == null) continue;
+            //             //传递过来的对象和函数不在提交之列
+            //             if (!((typeof json[i]).toLowerCase() == "function" || (typeof json[i]).toLowerCase() == "object")) {
+            //                 strArr.push(encodeURIComponent(i) + "=" + encodeURIComponent(json[i]));
+            //             } else if (utils.isArray(json[i])) {
+            //                 //支持传数组内容
+            //                 for (var j = 0; j < json[i].length; j++) {
+            //                     strArr.push(encodeURIComponent(i) + "[]=" + encodeURIComponent(json[i][j]));
+            //                 }
+            //             }
+            //         }
+            //         return strArr.join("&");
+            //     }
+
+            //     function doAjax(url, ajaxOptions) {
+            //         var xhr = creatAjaxRequest(),
+            //             //是否超时
+            //             timeIsOut = false,
+            //             //默认参数
+            //             defaultAjaxOptions = {
+            //                 method: "POST",
+            //                 timeout: 5000,
+            //                 async: true,
+            //                 data: {}, //需要传递对象的话只能覆盖
+            //                 onsuccess: function() {},
+            //                 onerror: function() {}
+            //             };
+
+            //         if (typeof url === "object") {
+            //             ajaxOptions = url;
+            //             url = ajaxOptions.url;
+            //         }
+            //         if (!xhr || !url) return;
+            //         var ajaxOpts = ajaxOptions ? utils.extend(defaultAjaxOptions, ajaxOptions) : defaultAjaxOptions;
+
+            //         var submitStr = json2str(ajaxOpts); // { name:"Jim",city:"Beijing" } --> "name=Jim&city=Beijing"
+            //         //如果用户直接通过data参数传递json对象过来，则也要将此json对象转化为字符串
+            //         if (!utils.isEmptyObject(ajaxOpts.data)) {
+            //             submitStr += (submitStr ? "&" : "") + json2str(ajaxOpts.data);
+            //         }
+            //         //超时检测
+            //         var timerID = setTimeout(function() {
+            //             if (xhr.readyState != 4) {
+            //                 timeIsOut = true;
+            //                 xhr.abort();
+            //                 clearTimeout(timerID);
+            //             }
+            //         }, ajaxOpts.timeout);
+
+            //         var method = ajaxOpts.method.toUpperCase();
+            //         var str = url + (url.indexOf("?") == -1 ? "?" : "&") + (method == "POST" ? "" : submitStr + "&noCache=" + +new Date);
+            //         xhr.open(method, str, ajaxOpts.async);
+            //         xhr.onreadystatechange = function() {
+            //             if (xhr.readyState == 4) {
+            //                 if (!timeIsOut && xhr.status == 200) {
+            //                     ajaxOpts.onsuccess(xhr);
+            //                 } else {
+            //                     ajaxOpts.onerror(xhr);
+            //                 }
+            //             }
+            //         };
+            //         if (method == "POST") {
+            //             xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            //             xhr.send(submitStr);
+            //         } else {
+            //             xhr.send(null);
+            //         }
+            //     }
+
+            //     function doJsonp(url, opts) {
+
+            //         var successhandler = opts.onsuccess || function() {},
+            //             scr = document.createElement('SCRIPT'),
+            //             options = opts || {},
+            //             charset = options['charset'],
+            //             callbackField = options['jsonp'] || 'callback',
+            //             callbackFnName,
+            //             timeOut = options['timeOut'] || 0,
+            //             timer,
+            //             reg = new RegExp('(\\?|&)' + callbackField + '=([^&]*)'),
+            //             matches;
+
+            //         if (utils.isFunction(successhandler)) {
+            //             callbackFnName = 'bd__editor__' + Math.floor(Math.random() * 2147483648).toString(36);
+            //             window[callbackFnName] = getCallBack(0);
+            //         } else if (utils.isString(successhandler)) {
+            //             callbackFnName = successhandler;
+            //         } else {
+            //             if (matches = reg.exec(url)) {
+            //                 callbackFnName = matches[2];
+            //             }
+            //         }
+
+            //         url = url.replace(reg, '\x241' + callbackField + '=' + callbackFnName);
+
+            //         if (url.search(reg) < 0) {
+            //             url += (url.indexOf('?') < 0 ? '?' : '&') + callbackField + '=' + callbackFnName;
+            //         }
+
+            //         var queryStr = json2str(opts); // { name:"Jim",city:"Beijing" } --> "name=Jim&city=Beijing"
+            //         //如果用户直接通过data参数传递json对象过来，则也要将此json对象转化为字符串
+            //         if (!utils.isEmptyObject(opts.data)) {
+            //             queryStr += (queryStr ? "&" : "") + json2str(opts.data);
+            //         }
+            //         if (queryStr) {
+            //             url = url.replace(/\?/, '?' + queryStr + '&');
+            //         }
+
+            //         scr.onerror = getCallBack(1);
+            //         if (timeOut) {
+            //             timer = setTimeout(getCallBack(1), timeOut);
+            //         }
+            //         createScriptTag(scr, url, charset);
+
+            //         function createScriptTag(scr, url, charset) {
+            //             scr.setAttribute('type', 'text/javascript');
+            //             scr.setAttribute('defer', 'defer');
+            //             charset && scr.setAttribute('charset', charset);
+            //             scr.setAttribute('src', url);
+            //             document.getElementsByTagName('head')[0].appendChild(scr);
+            //         }
+
+            //         function getCallBack(onTimeOut) {
+            //             return function() {
+            //                 try {
+            //                     if (onTimeOut) {
+            //                         options.onerror && options.onerror();
+            //                     } else {
+            //                         try {
+            //                             clearTimeout(timer);
+            //                             successhandler.apply(window, arguments);
+            //                         } catch (e) {}
+            //                     }
+            //                 } catch (exception) {
+            //                     options.onerror && options.onerror.call(window, exception);
+            //                 } finally {
+            //                     options.oncomplete && options.oncomplete.apply(window, arguments);
+            //                     scr.parentNode && scr.parentNode.removeChild(scr);
+            //                     window[callbackFnName] = null;
+            //                     try {
+            //                         delete window[callbackFnName];
+            //                     } catch (e) {}
+            //                 }
+            //             }
+            //         }
+            //     }
+
+            //     return {
+
+            //         request: function(url, opts) {
+            //             if (opts && opts.dataType == 'jsonp') {
+            //                 doJsonp(url, opts);
+            //             } else {
+            //                 doAjax(url, opts);
+            //             }
+            //         },
+            //         getJSONP: function(url, data, fn) {
+            //             var opts = {
+            //                 'data': data,
+            //                 'oncomplete': fn
+            //             };
+            //             doJsonp(url, opts);
+            //         }
+            //     };
+
+
+            // }();
+
+            UM.Editor.prototype._bkGetActionUrl = UM.Editor.prototype.getActionUrl;
+            UM.Editor.prototype.getActionUrl = function(action) {
+                fileIndex++;
+                if (action == 'uploadimage' || action == 'uploadfile') {
+                    return "${ctx}/ueditorFileUpload.do?fileIndex=" + fileIndex;
+                } else if (action == 'uploadvideo') {
+                    return "${ctx}/ueditorFileUpload.do?fileIndex=" + fileIndex;
+                } else if (action == 'uploadscrawl') {
+                    return "${ctx}/base64FileUpload.do?fileIndex=" + fileIndex;
+                } else {
+                    return this._bkGetActionUrl.call(this, action);
+                }
+            }
+            // UM.utils.serializeParam = function(json) {
+            //     var strArr = [];
+            //     for (var i in json) {
+            //         //忽略默认的几个参数
+            //         if (i == "method" || i == "timeout" || i == "async") continue;
+            //         //传递过来的对象和函数不在提交之列
+            //         if (!((typeof json[i]).toLowerCase() == "function" || (typeof json[i]).toLowerCase() == "object")) {
+            //             strArr.push(encodeURIComponent(i) + "=" + encodeURIComponent(json[i]));
+            //         } else if (utils.isArray(json[i])) {
+            //             //支持传数组内容
+            //             for (var j = 0; j < json[i].length; j++) {
+            //                 strArr.push(encodeURIComponent(i) + "[]=" + encodeURIComponent(json[i][j]));
+            //             }
+            //         }
+            //     }
+            //     return strArr.join("&");
+            // }
+            // UM.utils.formatUrl = function(url) {
+            //     var u = url.replace(/&&/g, '&');
+            //     u = u.replace(/\?&/g, '?');
+            //     u = u.replace(/&$/g, '');
+            //     u = u.replace(/&#/g, '#');
+            //     u = u.replace(/&+/g, '&');
+            //     return u;
+            // }
+            // UM.utils.str2json = function(s) {
+
+            //     if (!utils.isString(s)) return null;
+            //     if (window.JSON) {
+            //         return JSON.parse(s);
+            //     } else {
+            //         return (new Function("return " + utils.trim(s || '')))();
+            //     }
+
+            // }
+
+            // UM.Editor.prototype.getKfContent = function(callback, ue) {
+
+            //     var me = this;
+            //     var actionUrl = me.getActionUrl('uploadscrawl'),
+            //         params = UM.utils.serializeParam(me.queryCommandValue('serverparam')) || '',
+            //         url = UM.utils.formatUrl(actionUrl + (actionUrl.indexOf('?') == -1 ? '?' : '&') + params);
+
+            //     // 找到所有的base64
+            //     var count = 0;
+            //     var imgs = me.body.getElementsByTagName('img');
+            //     var base64Imgs = [];
+            //     UM.utils.each(imgs, function(item) {
+            //         var imgType = item.getAttribute('src').match(/^[^;]+/)[0];
+            //         if (imgType === 'data:image/png') {
+            //             base64Imgs.push(item);
+            //         }
+            //     });
+
+            //     if (base64Imgs.length == 0) {
+            //         execCallback();
+            //     } else {
+            //         UM.utils.each(base64Imgs, function(item) {
+
+            //             var opt = {};
+            //             opt[me.getOpt('scrawlFieldName')] = item.getAttribute('src').replace(/^[^,]+,/, '');
+            //             opt.onsuccess = function(xhr) {
+            //                 var json = UM.utils.str2json(xhr.responseText),
+            //                     url = me.options.scrawlUrlPrefix + json.url;
+
+            //                 item.setAttribute('src', url);
+            //                 item.setAttribute('_src', url);
+
+            //                 count++;
+
+            //                 execCallback();
+            //             }
+            //             opt.onerror = function(err) {
+            //                 console.error(err);
+            //                 count++;
+
+            //                 execCallback();
+            //             }
+
+
+            //             UM.ajax.request(url, opt);
+
+            //         });
+            //     }
+
+            //     function execCallback() {
+            //         if (count >= base64Imgs.length) {
+            //             ue.sync();
+            //             callback(me.getContent());
+            //         }
+            //     }
+
+            // };
+            var um = UM.getEditor('umeditor', {
+                UEDITOR_HOME_URL: './js/',
+                imageUrl: UM.Editor.prototype.getActionUrl('uploadimage'),
+                imagePath: '',
+                "scrawlActionName": "uploadscrawl",
+                "scrawlFieldName": "upfile",
+                "scrawlUrlPrefix": "",
+                // toolbar: ['underline ',
+                //     // 'insertorderedlist insertunorderedlist | selectall cleardoc paragraph | fontfamily fontsize',
+                //     // '| justifyleft justifycenter justifyright justifyjustify |',
+                //     // 'link unlink | emotion image video  | map',
+                //     // '| horizontal print preview fullscreen', 'drafts', 'formula', 
+                //     'simpleupload | kityformula'
+                // ]
+
+            });
+	        um.execCommand('inserthtml', '<img class="kfformula" src="http://www.baidu.com/img/baidu_jgylogo3.gif" data-latex="" style="min-width:10px;min-height:10px;"/>');
+
+            // um.addListener('blur', function() {
+            //     // try {
+            //     um.getKfContent(function(content) {
+            //         console.log(content)
+            //     }, um);
+            //     // } catch (e) {
+            // })
+            </script>
+        </body>
+
+        </html>
+        <!-- <!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=3">
+    <meta name="format-detection" content="telephone=no">
+    <title></title>
+	
+	<style>
+		body {
+			background-color: white;
+		}
+		
+		.ui-nodata {
+			position: fixed;
+			top: 50%;
+			margin-top: -50px;
+			width: 100%;
+			height: 100%;
+			text-align: center;
+		}
+		
+		.ui-nodata img {
+			height: 100px;
+		}
+	</style>
+</head>
+
+<body class="student-grade">
+	<div class="ui-nodata">
+		<img src="${ctx}/images/no_website.png"/>
+	</div>
+</body>
+
+</html> -->
