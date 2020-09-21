@@ -1,14 +1,21 @@
 <template>
-  <div class="subPageA">456</div>
+  <div class="subPageA">
+    456
+    <quill v-model="value" />
+  </div>
 </template>
 
 <script>
+import quill from '@components/editor'
+
 export default {
+  components: {
+    quill
+  },
   data() {
-    return {}
-  },
-  created() {
-    console.log(process.env)
-  },
+    return {
+      value: ''
+    }
+  }
 }
 </script>
