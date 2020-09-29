@@ -1,5 +1,5 @@
 <template>
-  <div ref="editor" class="ql-editor">
+  <div class="ql-editor__wrapper">
     <div :id="id"></div>
   </div>
 </template>
@@ -51,9 +51,6 @@ export default {
       if (this.editor) return
 
       this.$nextTick(() => {
-        const toolbar = this.$refs.editor.querySelector('.ql-toolbar')
-        toolbar && toolbar.remove()
-
         this.editor = new QlQuill(`#${this.id}`, {
           value: this.value,
           image: {
@@ -67,7 +64,7 @@ export default {
               formData.append('type', file.type)
               formData.append('lastModifiedDate', file.lastModifiedDate)
               formData.append('upfile', file)
-              formData.append('fileIndex', file)
+              formData.append('fileIndex', this.fileIndex)
               Vue.$api.uploadImage(formData).then(res => {
                 if (res.state.toLowerCase() === 'success') {
                   insert(res.url)
