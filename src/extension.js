@@ -7,17 +7,19 @@ import Vue from "vue";
 import api from "./assets/js/http/api";
 import { MessageBox, Message } from "element-ui";
 
-Vue.prototype.$http = api;
+Object.assign(Vue.prototype, {
+  $http: api,
 
-/**
- * @desc 弹框
- * 详细配置见https://element.eleme.cn/#/zh-CN/component/message-box
- */
-Vue.prototype.$msgbox = MessageBox;
+  /**
+   * @desc 弹框
+   * 详细配置见https://element.eleme.cn/#/zh-CN/component/message-box
+   */
+  $msgbox: MessageBox,
 
-/**
- * @desc 消息提示
- * @example this.$message.success("xxx");
- * 详细配置见https://element.eleme.cn/#/zh-CN/component/message
- */
-Vue.prototype.$message = Message;
+  /**
+   * @desc 消息提示
+   * @example this.$message.success("xxx");
+   * 详细配置见https://element.eleme.cn/#/zh-CN/component/message
+   */
+  $message: Message,
+});

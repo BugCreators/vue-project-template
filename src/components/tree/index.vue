@@ -13,7 +13,7 @@
       node-key="id"
       :data="formatData"
       :show-checkbox="$attrs['show-checkbox']"
-      :draggable="draggable"
+      :draggable="nodeDraggable"
       :props="treeProps"
       :default-expanded-keys="$attrs['default-expanded-keys']"
       :default-checked-keys="$attrs['default-checked-keys']"
@@ -45,7 +45,8 @@
                   mode === 'select' &&
                   selectedNodeList.map(x => x.id).includes(data.id)
               }"
-            >{{ data.name || "&nbsp;" }}</span>
+              >{{ data.name || "&nbsp;" }}</span
+            >
             <input
               v-else
               v-model="editingName"
@@ -53,8 +54,6 @@
               @blur="editingEnd"
               @keyup.enter="e => e.target.blur()"
               @click.stop="() => {}"
-              @mousedown="nodeDraggable = false"
-              @mouseup="nodeDraggable = true"
               :draggable="false"
               placeholder="请输入节点名称"
             />
@@ -120,18 +119,16 @@ export default {
       default: "show"
     },
 
-    /**
-     * @desc 新增按钮文字
-     * @example
-     * [String] '新增节点'
-     * [Function] node => node.level === 1 ? "新增子节点" : "新增父节点"
-     */
-    addBtnText: {
-      type: [String, Function],
-      default: "新增节点"
+    // 节点是否可拖拽
+    draggable: {
+      type: Boolean,
+      default: false
     },
+
     /**
      * @desc 节点工具栏按钮显示控制
+     * all、add、delete、edit: 全部、新增、删除、编辑按钮显示 返回Boolean值
+     * addTitle: 新增按钮文字 返回String值
      * 属性可为Boolean或Function
      * @example
      * [Boolean] { add: true }
@@ -141,11 +138,7 @@ export default {
     btnVisible: {
       type: Object,
       default: () => {
-        return {
-          add: true,
-          edit: true,
-          delete: true
-        };
+        return {};
       }
     },
 
@@ -177,9 +170,6 @@ export default {
         previousSibling: null,
         parent: null
       },
-
-      // 节点是否可拖拽 用来阻止编辑节点时拖拽
-      nodeDraggable: true,
 
       // 删除空节点确认弹窗是否显示 用于新增节点时限制弹窗个数
       confirmDialog: false,
@@ -227,8 +217,8 @@ export default {
       }
     },
     // 节点是否可拖拽
-    draggable() {
-      return this.mode === "edit" && this.nodeDraggable;
+    nodeDraggable() {
+      return this.draggable && !this.editingId;
     }
   },
   watch: {
@@ -340,26 +330,28 @@ export default {
       // 树的类型不为edit或节点处于编辑状态时隐藏
       if (this.mode !== "edit" || data.id === this.editingId) return false;
 
+      const isShow = this.btnVisible[type];
+
+      const showType = typeof isShow;
+
       switch (type) {
-        // 全部按钮显示控制 版本课本可编辑
         case "all":
-          return true;
-        // "删除"、"编辑"按钮显示控制 版本、课本可删除/编辑
         case "delete":
         case "edit":
         case "add":
-          const isShow = this.btnVisible[type];
           // 没传则默认显示
-          return typeof isShow === "undefined"
+          return showType === "undefined"
             ? true
-            : typeof isShow === "boolean"
+            : showType === "boolean"
             ? !!isShow
             : isShow(data);
         // "新增"按钮title
         case "addTitle":
-          return typeof this.addBtnText === "string"
-            ? this.addBtnText
-            : this.addBtnText(data) || "新增节点";
+          return showType === "undefined"
+            ? "新增节点"
+            : showType === "string"
+            ? isShow
+            : isShow(data) || "新增节点";
         default:
           return false;
       }
@@ -500,9 +492,7 @@ export default {
      * @param {object} node 节点
      */
     changeNodeStatus(data, node) {
-      // 节点被双击时也会触发该函数，因此需排除mode不为edit的情况
-      if (this.mode !== "edit") return;
-      if (this.editingId === data.id) return;
+      if (!this.showOptions(data, "edit")) return;
 
       this.editingName = data.name;
       this.editingId = data.id;
@@ -539,7 +529,7 @@ export default {
             data.bookId = res.result.bookId;
             data.name = res.result.name;
             data.id = res.result.id;
-            if (this.editingId.id === -1) {
+            if (this.editingId === -1) {
               const parentNode = node.parent,
                 preNode = node.previousSibling,
                 nextNode = node.nextSibling;
@@ -560,7 +550,6 @@ export default {
             this.$refs.tree.remove(this.editingId);
           }
           this.clearEditStatus();
-          this.nodeDraggable = true;
         }
 
         function reject() {
@@ -568,7 +557,6 @@ export default {
             this.$refs.tree.remove(this.editingId);
             this.clearEditStatus();
           }
-          this.nodeDraggable = true;
         }
       }
     },
