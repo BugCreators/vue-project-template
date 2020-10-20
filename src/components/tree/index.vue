@@ -418,7 +418,7 @@ export default {
           if (pos === "inner") {
             data.pid = desData.id;
             data.seq =
-              desNode.children.length > 1
+              desNode.children && desNode.children.length > 1
                 ? desNode.children[desNode.children.length - 1].seq + 1
                 : 0;
           } else if (pos === "before") {

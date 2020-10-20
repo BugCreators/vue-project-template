@@ -26,6 +26,8 @@ axios.interceptors.request.use(
           config.data = config.data || {};
           config.data.token = token;
           config.data = qs.stringify(config.data, { arrayFormat: "repeat" });
+        } else {
+          config.url += `?token=${token}`
         }
         break;
       case "get":

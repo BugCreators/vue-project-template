@@ -5,7 +5,6 @@
 </template>
 
 <script>
-import Vue from 'vue'
 import QlQuill from 'ql-quill'
 import 'ql-quill/dist/ql-quill.snow.css'
 
@@ -65,7 +64,7 @@ export default {
               formData.append('lastModifiedDate', file.lastModifiedDate)
               formData.append('upfile', file)
               formData.append('fileIndex', this.fileIndex)
-              Vue.$api.uploadImage(formData).then(res => {
+              this.$http.uploadImage(formData).then(res => {
                 if (res.state.toLowerCase() === 'success') {
                   insert(res.url)
                 }
