@@ -53,7 +53,7 @@ export default {
         this.editor = new QlQuill(`#${this.id}`, {
           value: this.value,
           image: {
-            accpet: '.jfif, .pjpeg, .jpeg, .pjp, .jpg, .png',
+            accept: '.jfif, .pjpeg, .jpeg, .pjp, .jpg, .png',
             action: (file, insert) => {
               this.fileIndex++
 
